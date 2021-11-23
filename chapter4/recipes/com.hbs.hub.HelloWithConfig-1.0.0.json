@@ -1,0 +1,27 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "com.hbs.hub.HelloWithConfig",
+  "ComponentVersion": "1.0.0",
+  "ComponentDescription": "My first remotely deployed AWS IoT Greengrass component.",
+  "ComponentPublisher": "Home Base Solutions",
+  "Manifests": [
+    {
+      "Platform": {
+        "os": "linux"
+      },
+      "Lifecycle": {
+        "Run": "cd {artifacts:decompressedPath}/archive && ./hello.sh"
+      },
+      "Artifacts": [
+        {
+          "URI": "s3://REPLACEME_HBS_COMPONENTS_BUCKET/artifacts/com.hbs.hub.HelloWithConfig/1.0.0/archive.zip",
+          "Unarchive": "ZIP",
+          "Permission": {
+            "Execute": "OWNER"
+          }
+        }
+      ]
+    }
+  ]
+}
+

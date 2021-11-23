@@ -1,0 +1,42 @@
+[
+  {
+    "id": "pool1",
+    "sku": "hbshub",
+    "features": [
+      {
+        "name": "arch",
+        "value": "armv7l"
+      },
+      {
+        "name": "ml",
+        "value": "no"
+      },
+      {
+        "name": "docker",
+        "value": "no"
+      },
+      {
+        "name": "streamManagement",
+        "value": "no"
+      }
+    ],
+    "devices": [
+      {
+        "id": "raspberrypi",
+        "OperatingSystem": "Linux",
+        "connectivity": {
+          "protocol": "ssh",
+          "ip": "192.168.1.10",
+          "port": 22,
+          "auth": {
+            "method": "password",
+            "credentials": {
+              "user": "pi",
+              "password": "replace-this-super-secret-password"
+            }
+          }
+        }
+      }
+    ]
+  }
+]

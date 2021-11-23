@@ -1,0 +1,23 @@
+---
+RecipeFormatVersion: '2020-01-25'
+ComponentName: com.hbs.hub.Container
+ComponentVersion: '1.0.0'
+ComponentDescription: 'A component that uses Docker Compose to run images from Docker Hub.'
+ComponentPublisher: Amazon
+ComponentDependencies:
+  aws.greengrass.DockerApplicationManager:
+    VersionRequirement: ~2.0.0
+Manifests:
+  - Platform:
+      os: all
+    Lifecycle:
+      Startup: 
+        RequiresPrivilege: true
+        Script: |
+          cd {artifacts:path}
+          docker-compose up -d
+      Shutdown:
+        RequiresPrivilege: true
+        Script: |
+          cd {artifacts:path}
+          docker-compose down

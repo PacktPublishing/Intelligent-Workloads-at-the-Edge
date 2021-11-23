@@ -1,0 +1,39 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "com.hbs.hub.ReadSenseHATSimulated",
+  "ComponentVersion": "1.0.0",
+  "ComponentDescription": "Generate simulated sensor values and publish them on local IoT Greengrass IPC",
+  "ComponentPublisher": "Home Base Solutions",
+  "ComponentConfiguration": {
+    "DefaultConfiguration": {
+      "accessControl": {
+        "aws.greengrass.ipc.pubsub": {
+          "com.hbs.hub.ReadSenseHATSimulated:pubsub:1": {
+            "policyDescription": "Allows publish operations on local IPC",
+            "operations": [
+              "aws.greengrass#PublishToTopic"
+            ],
+            "resources": [
+              "*"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Manifests": [
+    {
+      "Platform": {
+        "os": "linux"
+      },
+      "Lifecycle": {
+        "Install": {
+          "Script": "python3 -m venv env && env/bin/python -m pip install -r {artifacts:path}/requirements.txt"
+        },
+        "Run": {
+          "Script": "env/bin/python {artifacts:path}/read_senseHAT_simulated.py"
+        }
+      }
+    }
+  ]
+}

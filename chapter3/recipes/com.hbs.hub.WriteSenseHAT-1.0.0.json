@@ -1,0 +1,40 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "com.hbs.hub.WriteSenseHAT",
+  "ComponentVersion": "1.0.0",
+  "ComponentDescription": "Subscribe on local IoT Greengrass IPC and scroll measurements on SenseHAT",
+  "ComponentPublisher": "Home Base Solutions",
+  "ComponentConfiguration": {
+    "DefaultConfiguration": {
+      "accessControl": {
+        "aws.greengrass.ipc.pubsub": {
+          "com.hbs.hub.WriteSenseHAT:pubsub:1": {
+            "policyDescription": "Allows subscribe operations on local IPC",
+            "operations": [
+              "aws.greengrass#SubscribeToTopic"
+            ],
+            "resources": [
+              "*"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Manifests": [
+    {
+      "Platform": {
+        "os": "linux"
+      },
+      "Lifecycle": {
+        "Install": {
+          "RequiresPrivilege": true,
+          "Script": "usermod -a -G i2c,video ggc_user && apt update && apt upgrade -y && apt install python3 libatlas-base-dev -y && python3 -m venv env && env/bin/python -m pip install -r {artifacts:path}/requirements.txt"
+        },
+        "Run": {
+          "Script": "env/bin/python {artifacts:path}/scrolling_measurements.py"
+        }
+      }
+    }
+  ]
+}

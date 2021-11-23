@@ -1,0 +1,49 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "com.hbs.hub.ScrollMessageSimulated",
+  "ComponentVersion": "1.0.0",
+  "ComponentDescription": "Subscribe on cloud IoT Core topic and log received messages",
+  "ComponentPublisher": "Home Base Solutions",
+  "ComponentConfiguration": {
+    "DefaultConfiguration": {
+      "accessControl": {
+        "aws.greengrass.ipc.pubsub": {
+          "com.hbs.hub.ScrollMessageSimulated:pubsub:1": {
+            "policyDescription": "Allows subscribe operations on AWS IoT Core topics",
+            "operations": [
+              "aws.greengrass#SubscribeToIoTCore"
+            ],
+            "resources": [
+              "ml/dlr/image-classification"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Manifests": [
+    {
+      "Platform": {
+        "os": "linux"
+      },
+      "Lifecycle": {
+        "Install": {
+          "RequiresPrivilege": true,
+          "Script": "./{artifacts:decompressedPath}/install.sh"
+        },
+        "Run": {
+          "Script": "env/bin/python {artifacts:decompressedPath}/scrolling_message.py"
+        }
+      },
+      "Artifacts": [
+        {
+          "URI": "s3://REPLACEME_HBS_COMPONENTS_BUCKET/artifacts/com.hbs.hub.ScrollMessageSimulated/1.0.0/archive.zip",
+          "Unarchive": "ZIP",
+          "Permission": {
+            "Execute": "OWNER"
+          }
+        }
+      ]
+    }
+  ]
+}

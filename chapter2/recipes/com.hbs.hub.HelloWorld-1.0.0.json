@@ -1,0 +1,23 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "com.hbs.hub.HelloWorld",
+  "ComponentVersion": "1.0.0",
+  "ComponentDescription": "My first AWS IoT Greengrass component.",
+  "ComponentPublisher": "Home Base Solutions",
+  "ComponentConfiguration": {
+    "DefaultConfiguration": {
+      "Message": "world!"
+    }
+  },
+  "Manifests": [
+    {
+      "Platform": {
+        "os": "linux"
+      },
+      "Lifecycle": {
+        "Run": "{artifacts:path}/hello.sh '{configuration:/Message}'"
+      }
+    }
+  ]
+}
+

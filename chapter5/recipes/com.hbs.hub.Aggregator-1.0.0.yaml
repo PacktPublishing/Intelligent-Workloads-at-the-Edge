@@ -1,0 +1,31 @@
+---
+RecipeFormatVersion: '2020-01-25'
+ComponentName: com.hbs.hub.Aggregator
+ComponentVersion: '1.0.0'
+ComponentDescription: Uses stream manager to store local data
+ComponentPublisher: packt
+ComponentConfiguration:
+  DefaultConfiguration:
+    sub_topic: "hbs/localtopic"
+    kinesis_stream: "bombie-MyKinesisStream-YUmzaHa2qkmg"
+    accessControl: 
+      aws.greengrass.ipc.pubsub:
+        com.hbs.hub.Aggregator:pubsub:1:
+          policyDescription: "Allows access to subscribe to topics"
+          operations:
+            - aws.greengrass#SubscribeToTopic
+            - aws.greengrass#PublishToTopic
+          resources: 
+            - "*"
+ComponentDependencies:
+  aws.greengrass.StreamManager:
+    VersionRequirement: "^2.0.0"
+Manifests:
+  - Platform:
+      os: all
+    Lifecycle:
+      Install: 
+        pip3 install awsiotsdk numpy -t .
+      Run: |
+        export PYTHONPATH=$PYTHONPATH:{artifacts:path}/stream_manager
+        PYTHONPATH=$PWD python3 -u {artifacts:path}/hbs_aggregator.py --sub-topic="{configuration:/sub_topic}" --kinesis-stream="{configuration:/kinesis_stream}"

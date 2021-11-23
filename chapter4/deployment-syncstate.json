@@ -1,0 +1,26 @@
+{
+  "targetArn": "arn:aws:iot:us-west-2:REPLACEME_ACCOUNTID:thinggroup/hbshubprototypes",
+  "components": {
+    "aws.greengrass.Cli": {
+      "componentVersion": "2.4.0"
+    },
+    "aws.greengrass.clientdevices.mqtt.Moquette": {
+      "componentVersion": "2.0.1"
+    },
+    "aws.greengrass.clientdevices.Auth": {
+      "componentVersion": "2.0.2",
+      "configurationUpdate": {
+        "merge": "{\n          \"deviceGroups\": {\n            \"formatVersion\": \"2021-03-05\",\n            \"definitions\": {\n              \"MyDeviceGroup\": {\n                \"selectionRule\": \"thingName: *\",\n                \"policyName\": \"MyPermissivePolicy\"\n              }\n            },\n            \"policies\": {\n              \"MyPermissivePolicy\": {\n                \"AllowAll\": {\n                  \"statementDescription\": \"Allow client devices to perform all actions.\",\n                  \"operations\": [\n                    \"*\"\n                  ],\n                  \"resources\": [\n                    \"*\"\n                  ]\n                }\n              }\n            }\n          }\n        }"
+      }
+    },
+    "aws.greengrass.clientdevices.mqtt.Bridge": {
+      "componentVersion": "2.0.1",
+      "configurationUpdate": {
+        "merge": "{\n          \"mqttTopicMapping\": {\n            \"UpstreamShadow\": {\n              \"topic\": \"$aws/things/localdevice/shadow/update\",\n              \"source\": \"LocalMqtt\",\n              \"target\": \"IotCore\"\n            },\n            \"DownstreamShadow\": {\n              \"topic\": \"$aws/things/localdevice/shadow/update/accepted\",\n              \"source\": \"IotCore\",\n              \"target\": \"LocalMqtt\"\n            },\n            \"UpstreamHeartbeat\": {\n              \"topic\": \"dt/+/heartbeat\",\n              \"source\": \"LocalMqtt\",\n              \"target\": \"IotCore\"\n            }\n          }\n        }"
+      }
+    },
+    "aws.greengrass.clientdevices.IPDetector": {
+      "componentVersion": "2.0.2"
+    }
+  }
+}

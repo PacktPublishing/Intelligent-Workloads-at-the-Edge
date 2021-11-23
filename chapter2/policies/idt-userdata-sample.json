@@ -1,0 +1,5 @@
+{
+  "TempResourcesDirOnDevice": "/tmp/idt",
+  "InstallationDirRootOnDevice": "/greengrass",
+  "GreengrassNucleusZip": "Users/ryan/projects/idt/devicetester_greengrass_v2_mac/products/aws.greengrass.nucleus.zip"
+}

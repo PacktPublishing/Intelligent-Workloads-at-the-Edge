@@ -1,0 +1,15 @@
+argcomplete==1.12.3
+awscrt==0.12.0
+awsiotsdk==1.7.0
+boto3==1.19.3
+botocore==1.22.3
+click==8.0.1
+jmespath==0.10.0
+packaging==21.0
+pipx==0.16.3
+pyparsing==2.4.7
+python-dateutil==2.8.2
+s3transfer==0.5.0
+six==1.16.0
+urllib3==1.26.7
+userpath==1.6.0

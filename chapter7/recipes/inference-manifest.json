@@ -1,0 +1,76 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "aws.greengrass.DLRImageClassification",
+  "ComponentVersion": "2.1.6",
+  "ComponentType": "aws.greengrass.generic",
+  "ComponentDescription": "Sample recipe - Image classification inference using DLR and resnet50 default model.",
+  "ComponentPublisher": "AWS",
+  "ComponentConfiguration": {
+    "DefaultConfiguration": {
+      "accessControl": {
+        "aws.greengrass.ipc.mqttproxy": {
+          "aws.greengrass.DLRImageClassification:mqttproxy:1": {
+            "policyDescription": "Allows access to publish via topic ml/dlr/image-classification.",
+            "operations": [
+              "aws.greengrass#PublishToIoTCore"
+            ],
+            "resources": [
+              "ml/dlr/image-classification"
+            ]
+          }
+        }
+      },
+      "ImageName": "cat.jpeg",
+      "InferenceInterval": "3600",
+      "PublishResultsOnTopic": "ml/dlr/image-classification",
+      "ModelResourceKey": {
+        "armv7l": "DLR-resnet50-armv7l-cpu-ImageClassification"
+      }
+    }
+  },
+  "ComponentDependencies": {
+    "variant.DLR.ImageClassification.ModelStore": {
+      "VersionRequirement": ">=2.1.0 <2.2.0",
+      "DependencyType": "HARD"
+    },
+    "variant.DLR": {
+      "VersionRequirement": ">=1.6.4 <1.7.0",
+      "DependencyType": "HARD"
+    },
+    "aws.greengrass.Nucleus": {
+      "VersionRequirement": ">=2.0.0 <2.5.0",
+      "DependencyType": "SOFT"
+    }
+  },
+  "Manifests": [
+    {
+      "Platform": {
+        "os": "linux",
+        "architecture": "arm"
+      },
+      "Lifecycle": {
+        "setEnv": {
+          "DLR_IC_MODEL_DIR": "{variant.DLR.ImageClassification.ModelStore:artifacts:decompressedPath}/{configuration:/ModelResourceKey/armv7l}",
+          "DEFAULT_DLR_IC_IMAGE_DIR": "{artifacts:decompressedPath}/image_classification/sample_images/"
+        },
+        "run": {
+          "RequiresPrivilege": "true",
+          "script": "\n                                    . {variant.DLR:configuration:/MLRootPath}/greengrass_ml_dlr_venv/bin/activate\n                                    python3 {artifacts:decompressedPath}/image_classification/inference.py"
+        }
+      },
+      "Artifacts": [
+        {
+          "Uri": "greengrass:OB5FzN_G9vmB3q5rAoPxikkmxagR4nJ4aNQPlFPsH2k=/image_classification.zip",
+          "Digest": "kWhDXuHinhLtDfu9ivZfJuBq2LW9V3E/VxY6GSCUxXE=",
+          "Algorithm": "SHA-256",
+          "Unarchive": "ZIP",
+          "Permission": {
+            "Read": "OWNER",
+            "Execute": "NONE"
+          }
+        }
+      ]
+    }
+  ],
+  "Lifecycle": {}
+}

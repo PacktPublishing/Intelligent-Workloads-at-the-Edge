@@ -1,0 +1,25 @@
+---
+RecipeFormatVersion: '2020-01-25'
+ComponentName: com.hbs.hub.Publisher
+ComponentVersion: '1.0.0'
+ComponentDescription: A component that publishes messages to local topics.
+ComponentPublisher: packt
+ComponentConfiguration:
+  DefaultConfiguration:
+    pub_topic: "hbs/localtopic"
+    accessControl: 
+      aws.greengrass.ipc.pubsub:
+        com.hbs.hub.Publisher:pubsub:1:
+          policyDescription: Allows acces to publish to local topics
+          operations: 
+            - aws.greengrass#PublishToTopic
+          resources: 
+            - "*"
+Manifests:
+  - Platform:
+      os: all
+    Lifecycle:
+      Install: |
+        pip3 install awsiotsdk -t .
+      Run: |
+        PYTHONPATH=$PWD python3 -u {artifacts:path}/hbs_publisher.py --pub-topic="{configuration:/pub_topic}"

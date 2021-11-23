@@ -1,0 +1,189 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: AWS CloudFormation template for the packt chapters 
+
+Resources:
+  MyQueryResultsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: "BucketOwnerFullControl"
+  
+  MyScriptBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: "BucketOwnerFullControl"
+  
+  MySensorDatabucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+
+  MyDynamoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "packt_sensordata"
+      AttributeDefinitions:
+        -
+          AttributeName: "device_id"
+          AttributeType: "S"
+        -
+          AttributeName: "timestamp"
+          AttributeType: "N"
+      KeySchema:
+        -
+          AttributeName: "device_id"
+          KeyType: "HASH"
+        -
+          AttributeName: "timestamp"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  MyKinesisStream: 
+    Type: AWS::Kinesis::Stream 
+    Properties: 
+        RetentionPeriodHours: 168 
+        ShardCount: 3 
+
+  MyKinesisDeliveryStream: 
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamType: KinesisStreamAsSource
+      KinesisStreamSourceConfiguration: 
+        KinesisStreamARN: !GetAtt MyKinesisStream.Arn
+        RoleARN: !GetAtt MykinesisStreamRole.Arn
+      ExtendedS3DestinationConfiguration:
+        BucketARN: !Join 
+          - ''
+          - - 'arn:aws:s3:::'
+            - !Ref MySensorDatabucket
+        BufferingHints:
+          IntervalInSeconds: '60'
+          SizeInMBs: '50'
+        Prefix: firehose/
+        RoleARN: !GetAtt MyfirehoseDeliveryRole.Arn
+    DependsOn: MykinesisStreamPolicy
+
+
+  MyfirehoseDeliveryRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: 'sts:AssumeRole'
+
+
+  MyfirehosedeliveryPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: packt_firehose_delivery_policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:AbortMultipartUpload'
+              - 's3:GetBucketLocation'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+              - 's3:ListBucketMultipartUploads'
+              - 's3:PutObject'
+            Resource:
+              - !Join 
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref MySensorDatabucket
+              - !Join 
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref MySensorDatabucket
+                  - '*'
+      Roles:
+        - !Ref MyfirehoseDeliveryRole
+
+  MykinesisStreamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: 'sts:AssumeRole'
+
+  MykinesisStreamPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: packt_kinesis_delivery_policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'kinesis:*'
+            Resource: "*"
+      Roles:
+        - !Ref MykinesisStreamRole    
+
+  MyiotDynamodbRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: iot.amazonaws.com
+            Action: 'sts:AssumeRole'
+
+  MyiotDynamodbPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: packt_ddb_delivery_policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 'dynamodb:PutItem'
+            Resource: !GetAtt MyDynamoTable.Arn
+      Roles:
+        - !Ref MyiotDynamodbRole   
+
+  MydynamoRepublishTopicRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: packt_dynamoPub_rule
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql: SELECT * FROM 'hbs/cloudtopic'
+        Actions:
+          - DynamoDBv2:
+              PutItem: 
+                TableName: !Ref MyDynamoTable
+              RoleArn: !GetAtt MyiotDynamodbRole.Arn        
+Outputs:
+  DatalakeBucket:
+    Value: !GetAtt MySensorDatabucket.Arn
+    Description: This bucket stores all the sensor data.
+  QueryResultsBucket:
+    Value: !GetAtt MyQueryResultsBucket.Arn
+    Description: This bucket stores the query results from Athena.
+  ScriptsBucket:
+    Value: !GetAtt MyScriptBucket.Arn
+    Description: This bucket stores the query results from Athena.
+  DynamoDBName:
+    Value: !GetAtt MyDynamoTable.Arn
+    Description: This is the operational data store for all telemetry data.
+  KinesisFirehoseName:
+    Value: !GetAtt MyKinesisDeliveryStream.Arn
+    Description: This is the firehose stream for all telemetry.

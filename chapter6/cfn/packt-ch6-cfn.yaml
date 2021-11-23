@@ -1,0 +1,219 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: AWS CloudFormation template for the packt chapters 
+
+Parameters:
+  MySensorDatabucket:
+      Description: S3 Bucket that stores the real time sensor data
+      Type: String
+      ConstraintDescription: You must specify the bucket name where the raw data is stored
+
+Resources:
+  MyGlueRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "glue.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        -
+          PolicyName: "root"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action: "*"
+                Resource: "*"
+ 
+  # Add table prefix for the crawler
+  MyGlueCrawler:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: "packt_crawler"
+      Role: !GetAtt MyGlueRole.Arn
+      DatabaseName: !Ref MyGlueDatabase
+      Targets:
+        S3Targets:
+          - Path: 
+              Fn::Sub: ${MySensorDatabucket}
+      SchemaChangePolicy:
+        UpdateBehavior: "UPDATE_IN_DATABASE"
+        DeleteBehavior: "LOG"
+      Schedule:
+        ScheduleExpression: "cron(0/5 * ? * MON-FRI *)"
+  
+  MyGlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: "packt_gluedb"
+        Description: "packtDatabaseDescription"
+        LocationUri: "packtLocationUri"
+        Parameters:
+          key1 : "value1"
+          key2 : "value2"
+
+  MyLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt MyLambdaIAMRole.Arn
+      Runtime: "nodejs12.x"
+      InlineCode: |
+        /* global cast */
+        const AWS = require("aws-sdk");
+        const dynamo = new AWS.DynamoDB.DocumentClient();
+        exports.handler = async (event, context) => {
+          let body;
+          let statusCode = 200;
+          const headers = {
+            "Content-Type": "application/json"
+          };
+
+          try {
+            switch (event.routeKey) {
+              case "GET /items/{device_id}":
+                var nid = String(event.pathParameters.id);
+                body = await dynamo
+                  .query({
+                    TableName: "packt_sensordata",
+                    KeyConditionExpression: "id = :nid",
+                    ExpressionAttributeValues: {
+                      ":nid" : nid
+                    }
+                  })
+                  .promise();
+                break;
+              case "GET /items":
+                body = await dynamo.scan({ TableName: "packt_sensordata" }).promise();
+                break;
+              case "PUT /items":
+                let requestJSON = JSON.parse(event.body);
+                await dynamo
+                  .put({
+                    TableName: "packt_sensordata",
+                    Item: {
+                      device_id: requestJSON.id,
+                      temperature: requestJSON.temperature,
+                      humidity: requestJSON.humidity,
+                      device_name: requestJSON.device_name
+                    }
+                  })
+                  .promise();
+                body = `Put item ${requestJSON.id}`;
+                break;
+              default:
+                throw new Error(`Unsupported route: "${event.routeKey}"`);
+            }
+          } catch (err) {
+            statusCode = 400;
+            body = err.message;
+          } finally {
+            body = JSON.stringify(body);
+          }
+
+          return {
+            statusCode,
+            body,
+            headers
+          };
+        };
+
+  MyLambdaIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'lambda.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    
+  MyLambdaPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: lambda_iam_policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'dynamodb:*'
+            Resource: "*"
+      Roles:
+        - !Ref MyLambdaIAMRole    
+
+  MyLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref MyLambdaFunction
+      Action: "lambda:InvokeFunction"
+      Principal: apigateway.amazonaws.com
+      # SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${MyHttpApi}/*/*/items'
+  
+  MyHttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: MyPacktAPI
+      ProtocolType: HTTP
+
+  MyApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref MyHttpApi
+      StageName: $default
+      Description: Default Stage
+      AutoDeploy: true
+  
+  MyIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MyHttpApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !Sub 'arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations'
+
+  MyApiRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MyHttpApi
+      RouteKey: "GET /items"
+      # AuthorizationType: AWS_IAM
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref MyIntegration
+
+
+
+Outputs:
+  MyHTTPApi:
+    Value: !Ref MyHttpApi
+    Description: This is the api  for accessing data
+  
+  MyLambdaFunction:
+    Value: !Ref MyLambdaFunction
+    Description: This is the lambda function for accessing data
+
+  MyGlueCrawler:
+    Value: !Ref MyGlueCrawler
+    Description: This is the crawler.

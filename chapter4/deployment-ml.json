@@ -1,0 +1,29 @@
+{
+  "targetArn": "arn:aws:iot:us-west-2:REPLACEME_ACCOUNTID:thinggroup/hbshubprototypes",
+  "components": {
+    "aws.greengrass.Cli": {
+      "componentVersion": "2.4.0"
+    },
+    "aws.greengrass.LogManager": {
+      "componentVersion": "2.2.0",
+      "configurationUpdate": {
+        "merge": "{\n          \"logsUploaderConfiguration\": {\n            \"systemLogsConfiguration\": {\n              \"uploadToCloudWatch\": \"true\",\n              \"minimumLogLevel\": \"INFO\",\n              \"diskSpaceLimit\": \"10\",\n              \"diskSpaceLimitUnit\": \"MB\",\n              \"deleteLogFileAfterCloudUpload\": \"false\"\n            },\n            \"componentLogsConfigurationMap\": {\n              \"com.hbs.hub.ScrollMessage\": {},\n              \"aws.greengrass.DLRImageClassification\": {}\n            }\n          },\n          \"periodicUploadIntervalSec\": \"300\"\n        }"
+      }
+    },
+    "variant.DLR": {
+      "componentVersion": "1.6.4"
+    },
+    "aws.greengrass.DLRImageClassification": {
+      "componentVersion": "2.1.5",
+      "configurationUpdate": {
+        "merge": "{\n          \"InferenceInterval\": \"10\"\n        }"
+      }
+    },
+    "variant.DLR.ImageClassification.ModelStore": {
+      "componentVersion": "2.1.4"
+    },
+    "com.hbs.hub.ScrollMessage": {
+      "componentVersion": "1.0.0"
+    }
+  }
+}

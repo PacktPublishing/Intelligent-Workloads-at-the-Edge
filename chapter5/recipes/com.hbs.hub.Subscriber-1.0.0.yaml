@@ -1,0 +1,35 @@
+---
+RecipeFormatVersion: '2020-01-25'
+ComponentName: com.hbs.hub.Subscriber
+ComponentVersion: '1.0.0'
+ComponentDescription: Subscribe to topic report on messages per second
+ComponentPublisher: packt
+ComponentConfiguration:
+  DefaultConfiguration:
+    sub_topic: "hbs/localtopic"
+    pub_topic: "hbs/cloudtopic"
+    accessControl:
+      aws.greengrass.ipc.pubsub:
+        com.hbs.hub.Subscriber:pubsub:1:
+          policyDescription: Allows full IPC pub/sub access
+          operations:
+            - aws.greengrass#SubscribeToTopic
+            - aws.greengrass#PublishToTopic
+          resources:
+            - "*"
+      aws.greengrass.ipc.mqttproxy:
+        com.hbs.hub.Subscriber.IoTCorePubSub:1:
+          policyDescription: Allows full access to IoT Core topics from IPC
+          operations:
+            - aws.greengrass#PublishToIoTCore
+            - aws.greengrass#SubscribeToIoTCore
+          resources:
+            - "*"
+Manifests:
+  - Platform:
+      os: all
+    Lifecycle:
+      Install: |
+        pip3 install awsiotsdk -t .
+      Run: |
+        PYTHONPATH=$PWD python3 -u {artifacts:path}/hbs_subscriber.py --sub-topic="{configuration:/sub_topic}" --pub-topic="{configuration:/pub_topic}"

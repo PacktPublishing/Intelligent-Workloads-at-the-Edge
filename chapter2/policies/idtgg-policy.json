@@ -1,0 +1,196 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor1",
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::*:role/idt-*",
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "iot.amazonaws.com",
+            "lambda.amazonaws.com",
+            "greengrass.amazonaws.com"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "VisualEditor2",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:CreateFunction",
+        "lambda:PublishVersion",
+        "iot:DeleteCertificate",
+        "lambda:DeleteFunction",
+        "lambda:GetFunction",
+        "execute-api:Invoke",
+        "iot:UpdateCertificate"
+      ],
+      "Resource": [
+        "arn:aws:execute-api:us-east-1:098862408343:9xpmnvs5h4/prod/POST/metrics",
+        "arn:aws:lambda:*:*:function:idt-*",
+        "arn:aws:iot:*:*:cert/*"
+      ]
+    },
+    {
+      "Sid": "VisualEditor3",
+      "Effect": "Allow",
+      "Action": [
+        "iot:CreateThing",
+        "iot:DeleteThing"
+      ],
+      "Resource": [
+        "arn:aws:iot:*:*:thing/idt-*",
+        "arn:aws:iot:*:*:cert/*"
+      ]
+    },
+    {
+      "Sid": "VisualEditor4",
+      "Effect": "Allow",
+      "Action": [
+        "iot:AttachPolicy",
+        "iot:DeletePolicy",
+        "iot:DetachPolicy"
+      ],
+      "Resource": [
+        "arn:aws:iot:*:*:policy/idt-*",
+        "arn:aws:iot:*:*:cert/*"
+      ]
+    },
+    {
+      "Sid": "VisualEditor5",
+      "Effect": "Allow",
+      "Action": [
+        "iot:CancelJob",
+        "iot:CreateJob",
+        "iot:DeleteJob",
+        "iot:DescribeJob",
+        "iot:DescribeJobExecution",
+        "iot:ListJobs*",
+        "iot:UpdateJob"
+      ],
+      "Resource": [
+        "arn:aws:iot:*:*:thing/idt-*",
+        "arn:aws:iot:*:*:job/*",
+        "arn:aws:iot:*:*:thinggroup/*"
+      ]
+    },
+    {
+      "Sid": "VisualEditor6",
+      "Effect": "Allow",
+      "Action": [
+        "greengrass:*",
+        "iam:AttachRolePolicy",
+        "iam:CreatePolicy",
+        "iam:CreateRole",
+        "iam:DeletePolicy",
+        "iam:DeleteRole",
+        "iam:DetachRolePolicy",
+        "iam:GetPolicy",
+        "iam:GetRole",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListEntitiesForPolicy",
+        "iam:ListPolicies",
+        "iam:ListRolePolicies",
+        "iam:TagPolicy",
+        "iam:TagRole",
+        "iot:AddThingToThingGroup",
+        "iot:AttachPolicy",
+        "iot:CreateCertificateFromCsr",
+        "iot:CreateKeysAndCertificate",
+        "iot:CreatePolicy",
+        "iot:CreateRoleAlias",
+        "iot:CreateThing",
+        "iot:CreateThingGroup",
+        "iot:DeleteCertificate",
+        "iot:DeletePolicy",
+        "iot:DeleteRoleAlias",
+        "iot:DeleteThing",
+        "iot:DeleteThingGroup",
+        "iot:DeleteThingShadow",
+        "iot:DescribeEndpoint",
+        "iot:DescribeRoleAlias",
+        "iot:DescribeThing",
+        "iot:DescribeThingGroup",
+        "iot:DetachPolicy",
+        "iot:DetachThingPrincipal",
+        "iot:GetPolicy",
+        "iot:GetThingShadow",
+        "iot:ListAttachedPolicies",
+        "iot:ListTagsForResource",
+        "iot:ListThingPrincipals",
+        "iot:ListThings",
+        "iot:Publish",
+        "iot:RemoveThingFromThingGroup",
+        "iot:TagResource",
+        "iot:UpdateCertificate",
+        "iot:UpdateThingShadow",
+        "iot-device-tester:SendMetrics",
+        "iot-device-tester:SupportedVersion",
+        "iot-device-tester:LatestIdt",
+        "iot-device-tester:CheckVersion",
+        "iot-device-tester:DownloadTestSuite"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VisualEditor7",
+      "Effect": "Allow",
+      "Action": [
+        "iot:AttachThingPrincipal",
+        "iot:DetachThingPrincipal"
+      ],
+      "Resource": [
+        "arn:aws:iot:*:*:thing/idt-*",
+        "arn:aws:iot:*:*:cert/*"
+      ]
+    },
+    {
+      "Sid": "VisualEditor8",
+      "Effect": "Allow",
+      "Action": [
+        "s3:AbortMultipartUpload",
+        "s3:CreateBucket",
+        "s3:DeleteBucket",
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion",
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:ListBucketVersions",
+        "s3:ListMultipartUploadParts",
+        "s3:PutBucketTagging",
+        "s3:PutObject",
+        "s3:PutObjectTagging"
+      ],
+      "Resource": "arn:aws:s3:::idt*"
+    },
+    {
+      "Sid": "VisualEditor9",
+      "Effect": "Allow",
+      "Action": [
+        "iot:AddThingToThingGroup",
+        "iot:CreateThingGroup",
+        "iot:DescribeThingGroup"
+      ],
+      "Resource": "arn:aws:iot:*:*:thinggroup/*"
+    },
+    {
+      "Sid": "VisualEditor10",
+      "Effect": "Allow",
+      "Action": [
+        "iot:AddThingToThingGroup"
+      ],
+      "Resource": "arn:aws:iot:*:*:thing/idt-*"
+    },
+    {
+      "Sid": "VisualEditor11",
+      "Effect": "Allow",
+      "Action": [
+        "iot:DescribeRoleAlias"
+      ],
+      "Resource": "arn:aws:iot:*:*:rolealias/*"
+    }
+  ]
+}

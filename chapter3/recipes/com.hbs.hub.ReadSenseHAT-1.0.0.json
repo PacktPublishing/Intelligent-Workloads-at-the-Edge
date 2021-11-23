@@ -1,0 +1,40 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "com.hbs.hub.ReadSenseHAT",
+  "ComponentVersion": "1.0.0",
+  "ComponentDescription": "Read sensor values from SenseHAT on Raspberry Pi and publish them on local IoT Greengrass IPC",
+  "ComponentPublisher": "Home Base Solutions",
+  "ComponentConfiguration": {
+    "DefaultConfiguration": {
+      "accessControl": {
+        "aws.greengrass.ipc.pubsub": {
+          "com.hbs.hub.ReadSenseHAT:pubsub:1": {
+            "policyDescription": "Allows publish operations on local IPC",
+            "operations": [
+              "aws.greengrass#PublishToTopic"
+            ],
+            "resources": [
+              "*"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Manifests": [
+    {
+      "Platform": {
+        "os": "linux"
+      },
+      "Lifecycle": {
+        "Install": {
+          "RequiresPrivilege": true,
+          "Script": "usermod -a -G i2c,input ggc_user && apt update && apt upgrade -y && apt install python3 libatlas-base-dev -y && python3 -m venv env && env/bin/python -m pip install -r {artifacts:path}/requirements.txt"
+        },
+        "Run": {
+          "Script": "env/bin/python {artifacts:path}/read_senseHAT.py"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+awscrt==0.12.4
+awsiotsdk==1.7.1
+numpy==1.21.0
+Pillow==8.2.0
+pkg-resources==0.0.0
+RTIMULib==7.2.1
+sense-hat==2.2.0

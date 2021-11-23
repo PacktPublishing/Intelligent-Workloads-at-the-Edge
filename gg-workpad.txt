@@ -1,0 +1,67 @@
+shorten linux prompt 
+
+PS1="[\W]\\$ "
+PS1='\u:\W\$ ' 
+
+sudo -E java -Droot="/greengrass/v2" -Dlog.store=FILE \
+  -jar ./GreengrassInstaller/lib/Greengrass.jar \
+  --aws-region us-west-2 \
+  --thing-name DemoGreengrassCore \
+  --thing-group-name DemoGreengrassCoreGroup \
+  --thing-policy-name DemoGreengrassV2IoTThingPolicy \
+  --tes-role-name DemoGreengrassV2TokenExchangeRole \
+  --tes-role-alias-name DemoGreengrassCoreTokenExchangeRoleAlias \
+  --component-default-user ggc_user:ggc_group \
+  --provision true \
+  --setup-system-service true
+  
+sudo /greengrass/v2/bin/greengrass-cli component list
+
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "com.hbs.hub.Publisher"
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "com.hbs.hub.Subscriber"
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "com.hbs.hub.Aggregator"
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "com.hbs.hub.Container"
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "com.hbs.hub.Consumer"
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "arn:aws:greengrass:us-west-2:aws:components:aws.greengrass.DockerApplicationManager:versions:2.0.4"
+
+arn:aws:greengrass:us-west-2:123456789012:components:com.example.HelloWorld:versions:1.0.0
+
+sudo /greengrass/v2/bin/greengrass-cli deployment create \
+  --recipeDir ~/Documents/hbshub/recipes \
+  --artifactDir ~/Documents/hbshub/artifacts \
+  --merge "com.hbs.hub.Publisher=1.0.0"
+
+sudo /greengrass/v2/bin/greengrass-cli deployment create \
+  --recipeDir ~/Documents/hbshub/recipes \
+  --artifactDir ~/Documents/hbshub/artifacts \
+  --merge "com.hbs.hub.Subscriber=1.0.0"
+
+sudo /greengrass/v2/bin/greengrass-cli deployment create \
+  --recipeDir recipes \
+  --artifactDir artifacts \
+  --merge "com.hbs.hub.Aggregator=1.0.0"
+
+sudo /greengrass/v2/bin/greengrass-cli deployment create \
+  --recipeDir ~/Documents/hbshub/recipes \
+  --artifactDir ~/Documents/hbshub/artifacts \
+  --merge "com.hbs.hub.Consumer=1.0.0"
+
+  sudo /greengrass/v2/bin/greengrass-cli deployment create \
+  --recipeDir ~/Documents/hbshub/recipes \
+  --artifactDir ~/Documents/hbshub/artifacts \
+  --merge "com.hbs.hub.Container=1.0.0"
+
+cp {stream_manager_sdk.zip,requirements.txt} ~/environment/GreengrassCore/artifacts/com.example.StreamManagerS3Python/1.0.0/
+
+aws s3 cp --recursive ./com.ex.Aggregator s3://testggv2bucket/artifacts/com.ex.Aggregator/
+
+curl --cert ee37ad1168-certificate.pem.crt --key ee37ad1168-private.pem.key \
+-H "x-amzn-iot-thingname: ggdemo1_Core" --cacert AmazonRootCA1.pem \
+https://c1b2kt2km8eh9h.credentials.iot.us-east-1.amazonaws.com/role-aliases/ggworkshopRoleAlias/credentials
+
+
+Missing steps - 
+
+1. add kinesis permision to gg token exchange role (done)
+2. change cfn with the new topic name for the iot rule (done)
+3. change dynamodb table in cfn

@@ -1,0 +1,8 @@
+version: "2"
+services:
+  app:
+    image: "hello-world:latest"
+  web:
+    image: "nginx:latest"
+  db:
+    image: "redis:latest"

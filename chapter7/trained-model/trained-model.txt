@@ -1,0 +1,15 @@
+Please download the Trained models for different platforms from the links below -
+
+1. Linux - ARM 64 
+
+TBD - The location is required to be updated
+
+2. Raspberry Pi 3 - ARM
+
+TBD - The location is required to be updated
+
+3. Linux - X86_64
+
+TBD - The location is required to be updated
+
+

@@ -7,7 +7,7 @@ ComponentPublisher: packt
 ComponentConfiguration:
   DefaultConfiguration:
     sub_topic: "hbs/localtopic"
-    kinesis_stream: "bombie-MyKinesisStream-YUmzaHa2qkmg"
+    kinesis_stream: "<update-kinesis-stream-name-from-cloudformation>"
     accessControl: 
       aws.greengrass.ipc.pubsub:
         com.hbs.hub.Aggregator:pubsub:1:

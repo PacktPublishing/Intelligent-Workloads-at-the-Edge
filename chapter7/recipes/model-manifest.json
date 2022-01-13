@@ -15,7 +15,7 @@
       {
         "Platform": {
           "os": "linux",
-          "architecture": "aarch64"
+          "architecture": "arm"
         },
         "Lifecycle": {},
         "Artifacts": [

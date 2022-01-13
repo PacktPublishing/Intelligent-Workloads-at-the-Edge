@@ -1,0 +1,35 @@
+#Handy Unix Commands for the exercises
+
+# shorten linux prompt 
+PS1="[\W]\\$ "
+PS1='\u:\W\$ ' 
+
+# Check the components running on greengrass
+sudo /greengrass/v2/bin/greengrass-cli component list
+
+# Remove a component deployed locally
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "com.hbs.hub.Publisher"
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "com.hbs.hub.Subscriber"
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "com.hbs.hub.Aggregator"
+sudo /greengrass/v2/bin/greengrass-cli --ggcRootPath /greengrass/v2 deployment create --remove "com.hbs.hub.Container"
+
+# Create a new component on greengrass
+sudo /greengrass/v2/bin/greengrass-cli deployment create \
+  --recipeDir ~/Documents/hbshub/recipes \
+  --artifactDir ~/Documents/hbshub/artifacts \
+  --merge "com.hbs.hub.Publisher=1.0.0"
+
+sudo /greengrass/v2/bin/greengrass-cli deployment create \
+  --recipeDir ~/Documents/hbshub/recipes \
+  --artifactDir ~/Documents/hbshub/artifacts \
+  --merge "com.hbs.hub.Subscriber=1.0.0"
+
+sudo /greengrass/v2/bin/greengrass-cli deployment create \
+  --recipeDir recipes \
+  --artifactDir artifacts \
+  --merge "com.hbs.hub.Aggregator=1.0.0"
+
+sudo /greengrass/v2/bin/greengrass-cli deployment create \
+  --recipeDir ~/Documents/hbshub/recipes \
+  --artifactDir ~/Documents/hbshub/artifacts \
+  --merge "com.hbs.hub.Container=1.0.0"

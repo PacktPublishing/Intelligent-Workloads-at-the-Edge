@@ -1,0 +1,61 @@
+# Troubleshooting steps
+
+a. Data is now showing up in s3 bucket
+
+i. Check the greengrass service role to ensure the edge device has permissions to push the data to kinesis stream. 
+ii. Navigate to AWS IoT Core Console -> Secure -> Role aliases -> Choose the role alias for your edge device
+iii. Click on edit IAM role, and the IAM console should open
+iv. Click on the attached policy, and update with the following permissions - 
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "kinesis:DeregisterStreamConsumer",
+                "kinesis:DecreaseStreamRetentionPeriod",
+                "logs:DescribeLogStreams",
+                "kinesis:PutRecords",
+                "ecr:DescribeImageReplicationStatus",
+                "iot:DescribeCertificate",
+                "ecr:ListTagsForResource",
+                "logs:CreateLogStream",
+                "kinesis:SplitShard",
+                "kinesis:MergeShards",
+                "kinesis:IncreaseStreamRetentionPeriod",
+                "ecr:DescribeRepositories",
+                "kinesis:DisableEnhancedMonitoring",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetLifecyclePolicy",
+                "kinesis:StopStreamEncryption",
+                "ecr:GetRegistryPolicy",
+                "ecr:DescribeImageScanFindings",
+                "kinesis:EnableEnhancedMonitoring",
+                "ecr:GetLifecyclePolicyPreview",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:DescribeRegistry",
+                "kinesis:CreateStream",
+                "ecr:GetAuthorizationToken",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents",
+                "kinesis:RegisterStreamConsumer",
+                "s3:GetObject",
+                "kinesis:PutRecord",
+                "kinesis:DeleteStream",
+                "kinesis:UpdateShardCount",
+                "ecr:BatchGetImage",
+                "s3:GetBucketLocation",
+                "kinesis:StartStreamEncryption",
+                "ecr:GetRepositoryPolicy"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
+Please note for real world applications, you need to use least priviledged access and not keep the permissions open to all resources as demonstrated here.
+
+v. If you are still not getting data, check the logs on greengrass device and AWS cloudwatch console 
+

@@ -23,7 +23,7 @@ aarch64 (or arm64) -
 "Uri": "greengrass:lpLfSdom6sLbtzMD_Hkn6ezGoMYOsfi9YcfSaEDk2pA=/DLR-resnet50-aarch64-cpu-ImageClassification.zip",
 "Digest": "onGJklvuguVotGEf/eE+4y1vx/JLTTkqDbEyyiBQ0Ik=",
 
-3. Following the instructions in the book to deploy these components
+3. Follow the instructions in the book to deploy these components
 
 You can find more machine learning components readily available for use in the below documentation.
 https://docs.aws.amazon.com/greengrass/v2/developerguide/perform-machine-learning-inference.html#ml-components

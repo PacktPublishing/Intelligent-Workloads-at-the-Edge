@@ -1,15 +1,29 @@
-Please download the Trained models for different platforms from the links below -
+Please use the following Trained models for different platforms. These models are trained by AWS on and available for 1-click deploy.
 
-1. Linux - ARM 64 
+1. Choose the appropriate ModelResourceKey for your platform :
 
-TBD - The location is required to be updated
+    armv7l: "DLR-resnet50-armv7l-cpu-ImageClassification"
+    x86_64: "DLR-resnet50-x86_64-cpu-ImageClassification"
+    aarch64: "DLR-resnet50-aarch64-cpu-ImageClassification"
 
-2. Raspberry Pi 3 - ARM
+2. Update the following attributes in the model-manifest.json for your respective platform :
 
-TBD - The location is required to be updated
+armv7l - 
 
-3. Linux - X86_64
+"Uri": "greengrass:uWN5K8yylhf40Qkd4IQQVubNNP5DUxXWqJ1UdMLSlFc=/DLR-resnet50-armv7l-cpu-ImageClassification.zip",
+"Digest": "eXhRRprcv2IU6/WmLuUKPfflpwGfHo4fhNDIr6mVqy4=",
 
-TBD - The location is required to be updated
+x86_64 (or amd64) -
 
+"Uri": "greengrass:zJ5Dr5g2v7Uw6W_EH8_Le1HqyZEfDXLKRZwNMqB1PL0=/DLR-resnet50-x86_64-cpu-ImageClassification.zip",
+"Digest": "fqOAFmRZmQedxdvsommEvXN2Dw1856Q42Wz5hStcVMw=",
 
+aarch64 (or arm64) -
+
+"Uri": "greengrass:lpLfSdom6sLbtzMD_Hkn6ezGoMYOsfi9YcfSaEDk2pA=/DLR-resnet50-aarch64-cpu-ImageClassification.zip",
+"Digest": "onGJklvuguVotGEf/eE+4y1vx/JLTTkqDbEyyiBQ0Ik=",
+
+3. Following the instructions in the book to deploy these components
+
+You can find more machine learning components readily available for use in the below documentation.
+https://docs.aws.amazon.com/greengrass/v2/developerguide/perform-machine-learning-inference.html#ml-components

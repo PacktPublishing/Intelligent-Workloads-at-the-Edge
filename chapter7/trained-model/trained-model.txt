@@ -1,0 +1,5 @@
+Please download the Trained models for different platforms from the links below -
+
+1. ARM aarch64 
+
+TBD - Need the location from packt for hosted models

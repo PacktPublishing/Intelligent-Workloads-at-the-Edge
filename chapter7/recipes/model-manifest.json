@@ -28,8 +28,9 @@
               "Execute": "NONE"
             }
           }
-        ]
-      }
-    ],
-    "Lifecycle": {}
-  }
+        }
+      ]
+    }
+  ],
+  "Lifecycle": {}
+}

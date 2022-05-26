@@ -1,3 +1,7 @@
+## [Get this title for $10 on Packt's Spring Sale](https://www.packt.com/B17595?utm_source=github&utm_medium=packt-github-repo&utm_campaign=spring_10_dollar_2022)
+-----
+For a limited period, all eBooks and Videos are only $10. All the practical content you need \- by developers, for developers
+
 # Intelligent Workloads at the Edge
 
 <a href="https://www.packtpub.com/product/intelligent-workloads-at-the-edge/9781801811781"><img src="https://static.packt-cdn.com/products/9781801811781/cover/smaller" alt="Intelligent Workloads at the Edge" height="256px" align="right"></a>
